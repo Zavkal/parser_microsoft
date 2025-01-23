@@ -54,6 +54,7 @@ def start_db():
         category TEXT,
         link_video TEXT,
         link_screenshot TEXT,
+        game_weight INTEGER,
         audio_ru INTEGER,
         interface_ru INTEGER,
         subtitles_ru INTEGER
@@ -150,6 +151,7 @@ def add_product(
         category: str = None,
         link_video: str = None,
         link_screenshot: str = None,
+        game_weight: str = None,
         audio_ru: bool = False,
         interface_ru: bool = False,
         subtitles_ru: bool = False):
@@ -160,11 +162,12 @@ def add_product(
         # Если записи нет, создаем новую
         cur.execute(
             '''INSERT INTO products (product_id, url_product, game_name, end_date_sale, device, description, short_description,
-            developer_name, publisher_name, image_url, pass_product_id, release_date, capabilities, category, link_video, link_screenshot, audio_ru, interface_ru, subtitles_ru) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+            developer_name, publisher_name, image_url, pass_product_id, release_date, capabilities, category, link_video, link_screenshot,
+             game_weight, audio_ru, interface_ru, subtitles_ru) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
             (product_id, url_product, game_name, end_date_sale, device, description, short_description,
              developer_name, publisher_name, image_url, pass_product_id, release_date, capabilities, category,
-             link_video, link_screenshot, audio_ru, interface_ru, subtitles_ru)
+             link_video, link_screenshot, game_weight, audio_ru, interface_ru, subtitles_ru)
         )
 
     else:
@@ -218,6 +221,24 @@ def update_game_name_product(game_name: str, product_id: str):
     conn.commit()
 
 
+def update_link_screenshots_product(link_screenshot: str, product_id: str):
+    pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #  -------------------------------------------------------------------------------------------Работа с ценами и странами
 
 
@@ -243,3 +264,46 @@ def update_price_product_en_us(
             )
 
         conn.commit()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

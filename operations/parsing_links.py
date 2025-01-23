@@ -7,7 +7,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 from config import main_game_list
-from database.db import add_product, update_price_product_en_us
 
 
 def open_page_and_scroll():
@@ -50,22 +49,22 @@ def get_product_links(driver):
                 link = re.findall(r'href=["\'](.*?)["\']', html_content)
                 link = ''.join(link)
                 links.append(link)
-                product_id = link.split('/')[-2]
-                add_product(url_product=link, product_id=product_id)
-                try:
-                    price = clear_price_symbol(container.find_element(By.CSS_SELECTOR, '[class*="Price-module__originalPrice___"]').text)
-                    discounted_price = clear_price_symbol(container.find_element(By.CSS_SELECTOR, '.Price-module__boldText___1i2Li').text)
-                    percentage = clear_price_symbol(container.find_element(By.CSS_SELECTOR, '[class*="ProductCard-module__discountTag"]').text)
-                    update_price_product_en_us(original_price=price,
-                                               product_id=product_id,
-                                               discounted_price=discounted_price,
-                                               discounted_percentage=percentage)
-                except:
-                    price = clear_price_symbol(container.find_element(By.CSS_SELECTOR, '.Price-module__boldText___1i2Li').text)
-                    update_price_product_en_us(original_price=price,
-                                               product_id=product_id,
-                                               discounted_price=price,
-                                               discounted_percentage=0)
+                # product_id = link.split('/')[-2]
+                # add_product(url_product=link, product_id=product_id)
+                # try:
+                #     price = clear_price_symbol(container.find_element(By.CSS_SELECTOR, '[class*="Price-module__originalPrice___"]').text)
+                #     discounted_price = clear_price_symbol(container.find_element(By.CSS_SELECTOR, '.Price-module__boldText___1i2Li').text)
+                #     percentage = clear_price_symbol(container.find_element(By.CSS_SELECTOR, '[class*="ProductCard-module__discountTag"]').text)
+                #     update_price_product_en_us(original_price=price,
+                #                                product_id=product_id,
+                #                                discounted_price=discounted_price,
+                #                                discounted_percentage=percentage)
+                # except:
+                #     price = clear_price_symbol(container.find_element(By.CSS_SELECTOR, '.Price-module__boldText___1i2Li').text)
+                #     update_price_product_en_us(original_price=price,
+                #                                product_id=product_id,
+                #                                discounted_price=price,
+                #                                discounted_percentage=0)
             except Exception as e:
                 print(f"Ошибка при извлечении ссылки: {e}")
         driver.quit()
