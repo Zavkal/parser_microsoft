@@ -1,5 +1,6 @@
 import os
 import sqlite3
+from datetime import datetime, timedelta, timezone
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -12,27 +13,26 @@ cur = conn.cursor()
 def start_db():
     """
     ru-RU en-US es-AR tr-TR en-NG uk-UA en-IN \n -- Полное описание бд при создании
-    1. Уникальный id товара на сайте, \n
-    2. Ссылка на товар, \n
-    3. Название игры, \n
-    4. Окончание скидки, \n
-    5. Поддерживаемые платформы, \n
-    6. Описание, \n
-    7. Короткое описание, \n
-    8. Разработчик, \n
-    9. Публичное название разработчика, \n
-    10. Ссылка на постер товара, \n
-    11. Гейм пассы, \n                                     понять логику геймпасса
-    12. Дата выхода игры, \n
-    13. Возможности игры, \n
-    14. Категории, \n
-    15. Ссылка на трейлер, \n
-    16. Ссылка на скриншоты, \n
-    17. Русс озвучка, \n
-    18. Русс интерфейс, \n
-    19. Русс субтитры, \n
-    *20. Ссылку на обои ?, \n
-    *21. Ссылка на видео ?, \n
+    *1. Уникальный id товара на сайте, \n
+    *2. Ссылка на товар, \n
+    *3. Название игры, \n
+    *4. Окончание скидки, \n
+    *5. Поддерживаемые платформы, \n
+    *6. Описание, \n
+    *7. Короткое описание, \n
+    *8. Разработчик, \n
+    *9. Публичное название разработчика, \n
+    *10. Ссылка на постер товара, \n
+    *11. Гейм пассы, \n
+    *12. Дата выхода игры, \n
+    *13. Возможности игры, \n
+    *14. Категории, \n
+    *15. Ссылка на трейлер, \n
+    *16. Ссылка на скриншоты, \n
+    *17. Вес игры
+    *18. Русс озвучка, \n
+    *19. Русс интерфейс, \n
+    *20. Русс субтитры, \n
     """
 
     cur.execute('''
@@ -225,15 +225,34 @@ def update_link_screenshots_product(link_screenshot: str, product_id: str):
     pass
 
 
+def update_price_products():
+    pass
 
 
+def get_all_url_products():
+    cur.execute('SELECT url_product FROM products')
+    result = []
+    for url in cur.fetchall():
+        result.append(url[0])
+
+    return result
 
 
+def get_all_sale_product(days=7):
+        current_date = datetime.now(timezone.utc)
+        future_date = current_date + timedelta(days=days)
 
+        # Запрос для выборки данных
+        query = 'SELECT url_product FROM products WHERE end_date_sale BETWEEN ? AND ?;'
 
+        # Выполняем запрос с подстановкой дат
+        cur.execute(query, (current_date.strftime("%Y-%m-%d"), future_date.strftime("%Y-%m-%d")))
 
+        result = []
+        for url in cur.fetchall():
+            result.append(url[0])
 
-
+        return result
 
 
 

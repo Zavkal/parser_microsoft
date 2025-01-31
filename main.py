@@ -19,7 +19,7 @@ def main():
         except Exception as e:
             print(f"Произошла ошибка при работе драйвера 2 раз: {e}")
 
-    pars_product_links(links)
+    pars_product_links(links, country='ru-RU')
 
 
 if __name__ == '__main__':

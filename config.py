@@ -1,9 +1,9 @@
-main_game_list1 = [
+main_game_list = [
     'https://www.xbox.com/en-US/games/browse',
     'https://www.xbox.com/en-US/games/browse?orderby=Title+Desc',
     'https://www.xbox.com/en-US/games/browse?orderby=Title+Asc'
 ]
-main_game_list = ['https://www.xbox.com/en-US/games/browse/Publisher-Spotlight-January-2025']
+
 
 product_pass = {
     'CFQ7TTC0QH5H': "UBISOFT+",

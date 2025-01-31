@@ -5,9 +5,10 @@ import re
 from database.db import add_product
 
 
-def pars_product_links(links: list) -> None:
+def pars_product_links(links: list, country: str) -> None:
     for link in links:
         capabilities_list = []
+        link = link.replace('en-US', country)
         try:
             # Отправляем GET-запрос
             response = requests.get(link)
@@ -50,7 +51,18 @@ def pars_product_links(links: list) -> None:
 
                         # Описание
                         description = product_summary.get('description')
+                        if isinstance(description, str):
+                            description = description.replace('\u00A0', ' ')
+                            description = description.replace('\u202F', ' ')
+                        else:
+                            description = None
+
                         short_description = product_summary.get('shortDescription')
+                        if isinstance(short_description, str):
+                            short_description = short_description.replace('\u00A0', ' ')
+                            short_description = short_description.replace('\u202F', ' ')
+                        else:
+                            short_description = None
 
                         # Разработчик и издатель
                         developer_name = product_summary.get('developerName')
@@ -64,9 +76,15 @@ def pars_product_links(links: list) -> None:
                                 capabilities_list.append(capabilities[item])
                         capabilities_list = ','.join(capabilities_list)
 
-                        # Совместимость девайсов
-                        device = ','.join(product_summary.get('availableOn'))
-
+                        try:
+                            # Совместимость девайсов
+                            device = ','.join(product_summary.get('availableOn'))
+                        except Exception as e:
+                            resp = requests.get(link.replace('ru-RU', 'en-US'))
+                            match = re.search(pattern, resp.text, re.DOTALL)
+                            preloaded_state = match.group(1)
+                            preloaded_state_data = json.loads(preloaded_state)
+                            device = ','.join(preloaded_state_data['core2']['products']['productSummaries'][f'{product_id}'].get('availableOn'))
                         # Релиз
                         release_date = product_summary.get('releaseDate')
 
@@ -76,7 +94,7 @@ def pars_product_links(links: list) -> None:
 
                         # Цены и скидки
                         specific_prices = product_summary.get('specificPrices', {}).get('purchaseable')
-                        if specific_prices:
+                        if len(specific_prices) > 0:
                             original_price = specific_prices[0].get('msrp', 0)
                             discounted_price = specific_prices[0].get('listPrice', 0)
                             discounted_percentage = specific_prices[0].get('discountPercentage', 0)
@@ -124,6 +142,10 @@ def pars_product_links(links: list) -> None:
 #     async with aiohttp.ClientSession() as session:
 #         tasks = [fetch_and_process(session, link.replace('en-US', 'ru-RU')) for link in links]
 #         await asyncio.gather(*tasks)
+
+
+if __name__ == '__main__':
+    pars_product_links([], country='ru-RU')
 
 
 
