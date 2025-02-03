@@ -1,5 +1,3 @@
-import asyncio
-
 from database.db import start_db
 from operations.parsing_links import open_page_and_scroll
 from operations.parsing_products_for_links import pars_product_links

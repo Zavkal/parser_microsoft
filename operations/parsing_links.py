@@ -9,9 +9,9 @@ from selenium.webdriver.support.wait import WebDriverWait
 from config import main_game_list
 
 
-def open_page_and_scroll():
+def open_page_and_scroll(links: list = main_game_list):
     all_link_products = []
-    for link in main_game_list:
+    for link in links:
         driver = Driver()
         driver.open(link)
         time.sleep(2)  # Небольшая задержка для загрузки страницы
@@ -49,22 +49,6 @@ def get_product_links(driver):
                 link = re.findall(r'href=["\'](.*?)["\']', html_content)
                 link = ''.join(link)
                 links.append(link)
-                # product_id = link.split('/')[-2]
-                # add_product(url_product=link, product_id=product_id)
-                # try:
-                #     price = clear_price_symbol(container.find_element(By.CSS_SELECTOR, '[class*="Price-module__originalPrice___"]').text)
-                #     discounted_price = clear_price_symbol(container.find_element(By.CSS_SELECTOR, '.Price-module__boldText___1i2Li').text)
-                #     percentage = clear_price_symbol(container.find_element(By.CSS_SELECTOR, '[class*="ProductCard-module__discountTag"]').text)
-                #     update_price_product_en_us(original_price=price,
-                #                                product_id=product_id,
-                #                                discounted_price=discounted_price,
-                #                                discounted_percentage=percentage)
-                # except:
-                #     price = clear_price_symbol(container.find_element(By.CSS_SELECTOR, '.Price-module__boldText___1i2Li').text)
-                #     update_price_product_en_us(original_price=price,
-                #                                product_id=product_id,
-                #                                discounted_price=price,
-                #                                discounted_percentage=0)
             except Exception as e:
                 print(f"Ошибка при извлечении ссылки: {e}")
         driver.quit()
@@ -72,29 +56,6 @@ def get_product_links(driver):
     except Exception as e:
         print(f'ФАТАЛЬНАЯ ОШИБКА РАБОТЫ {e}')
         driver.quit()
-
-# def save_links_to_file(links, filename):
-#     with open(filename, 'w') as file:
-#         for link in links:
-#             file.write(link + '\n')
-#     print(f"Ссылки сохранены в файл {filename}")
-
-
-# def create_unique_link_set(file_list):
-#     unique_links = set()  # Множество для хранения уникальных ссылок
-#     for file_name in file_list:
-#         try:
-#             with open(file_name, 'r', encoding='utf-8') as file:
-#                 for line in file:
-#                     link = line.strip()  # Убираем лишние пробелы и переносы строк
-#                     if link:  # Проверяем, что строка не пустая
-#                         unique_links.add(link)
-#         except FileNotFoundError:
-#             print(f"Файл {file_name} не найден.")
-#         except Exception as e:
-#             print(f"Ошибка при обработке файла {file_name}: {e}")
-#
-#     return list(unique_links)
 
 
 def clear_price_symbol(text: str):

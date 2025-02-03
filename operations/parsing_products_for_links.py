@@ -135,15 +135,6 @@ def pars_product_links(links: list, country: str) -> None:
             print(f"Ошибка при обработке {link}: {e}")
 
 
-# async def pars_product_links(links):
-#     """
-#     Асинхронно обрабатывает список ссылок.
-#     """
-#     async with aiohttp.ClientSession() as session:
-#         tasks = [fetch_and_process(session, link.replace('en-US', 'ru-RU')) for link in links]
-#         await asyncio.gather(*tasks)
-
-
 if __name__ == '__main__':
     pars_product_links([], country='ru-RU')
 

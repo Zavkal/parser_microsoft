@@ -221,6 +221,12 @@ def update_game_name_product(game_name: str, product_id: str):
     conn.commit()
 
 
+def update_end_date_sale_product(end_date_sale: str, product_id: str):
+    cur.execute('UPDATE products SET end_date_sale = ? WHERE product_id = ?', (end_date_sale, product_id)
+                )
+    conn.commit()
+
+
 def update_link_screenshots_product(link_screenshot: str, product_id: str):
     pass
 
@@ -239,21 +245,36 @@ def get_all_url_products():
 
 
 def get_all_sale_product(days=7):
-        current_date = datetime.now(timezone.utc)
-        future_date = current_date + timedelta(days=days)
+    current_date = datetime.now(timezone.utc)
+    future_date = current_date + timedelta(days=days)
 
-        # Запрос для выборки данных
-        query = 'SELECT url_product FROM products WHERE end_date_sale BETWEEN ? AND ?;'
+    # Запрос для выборки данных
+    query = 'SELECT url_product FROM products WHERE end_date_sale BETWEEN ? AND ?;'
 
-        # Выполняем запрос с подстановкой дат
-        cur.execute(query, (current_date.strftime("%Y-%m-%d"), future_date.strftime("%Y-%m-%d")))
+    # Выполняем запрос с подстановкой дат
+    cur.execute(query, (current_date.strftime("%Y-%m-%d"), future_date.strftime("%Y-%m-%d")))
 
-        result = []
-        for url in cur.fetchall():
-            result.append(url[0])
+    result = []
+    for url in cur.fetchall():
+        result.append(url[0])
 
-        return result
+    return result
 
+
+def get_game_by_id(product_id: str):
+    cur.execute('SELECT * FROM products WHERE product_id = ?', (product_id,))
+    result = cur.fetchone()
+
+    if result is None:
+        return {"error": "Game not found"}
+
+    # Получение имен колонок
+    columns = [desc[0] for desc in cur.description]
+
+    # Создание словаря с данными
+    game_data = dict(zip(columns, result))
+
+    return game_data
 
 
 
@@ -261,28 +282,33 @@ def get_all_sale_product(days=7):
 #  -------------------------------------------------------------------------------------------Работа с ценами и странами
 
 
-def update_price_product_en_us(
+def update_price_product(
+        country: str,  # Таблица, в которую вносим данные (например, "en-US")
         product_id: str,
         original_price: float,
         discounted_price: float = 0,
         discounted_percentage: float = 0):
 
-    cur.execute('SELECT COUNT(*) FROM "en-US" WHERE product_id = ?', (product_id,))
+    table_name = f'"{country}"'  # Защита от SQL-инъекций (экранирование кавычками)
+
+    # Проверяем, есть ли запись в таблице
+    cur.execute(f'SELECT COUNT(*) FROM {table_name} WHERE product_id = ?', (product_id,))
     exists = cur.fetchone()[0] > 0
 
     if not exists:
         # Если записи нет, создаем новую
-        cur.execute('INSERT INTO "en-US" (product_id, original_price, discounted_price, discounted_percentage)'
-                    ' VALUES (?, ?, ?, ?)',
+        cur.execute(f'INSERT INTO {table_name} (product_id, original_price, discounted_price, discounted_percentage) '
+                    'VALUES (?, ?, ?, ?)',
                     (product_id, original_price, discounted_price, discounted_percentage)
                     )
     else:
-        cur.execute(
-            'UPDATE "en-US" SET original_price = ?, discounted_price = ?, discounted_percentage = ? WHERE product_id = ?',
-            (original_price, discounted_price, discounted_percentage, product_id)
-            )
+        # Если запись уже существует, обновляем
+        cur.execute(f'UPDATE {table_name} SET original_price = ?, discounted_price = ?, '
+                    'discounted_percentage = ? WHERE product_id = ?',
+                    (original_price, discounted_price, discounted_percentage, product_id)
+                    )
 
-        conn.commit()
+    conn.commit()
 
 
 
